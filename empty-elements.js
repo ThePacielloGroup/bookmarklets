@@ -1,0 +1,1 @@
+javascript:(function(){var a=document.createElement('style'),b;document.head.appendChild(a);b=a.sheet;b.insertRule('*:not([src]):not([type]):empty{border:2px dotted #00f !important;background-color:#00f;}',0);})()

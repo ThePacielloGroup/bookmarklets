@@ -5,3 +5,4 @@ This repository holds browser bookmarklets for accessibility testing.
 ## Bookmarklets List
 
 * `track-focus.js` - Adds visible indicator to elements as they get focus
+* `link-underlines.js` - Adds underlines on link elements

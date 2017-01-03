@@ -1,0 +1,1 @@
+javascript:(function(){var a=document.createElement('style'),b;document.head.appendChild(a);b=a.sheet;b.insertRule('*:focus,a:focus{outline:2px dotted #00f !important;box-shadow: 0 0 2em rgba(255,255,255,.75) !important;}',0);})()

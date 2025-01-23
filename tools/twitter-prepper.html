@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+	<head>
+		<meta charset="utf-8">
+		<title>Twitter Prepper</title>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta content="width=device-width, shrink-to-fit=no">
+		<link rel="stylesheet" href="tools.css">
+	</head>
+	<body>
+		<main>
+			<h1>Twitter Prepper</h1>
+			<p>Twitter posts must be 280 characters or fewer. If you have a URL, you'll lose more available characters. This tool just helps to ensure that a Tweet that you prepare will fit without requiring further editing.</p>
+			<p>Enter the details below, keeping an eye on the character count, then copy/paste the output from the final box and send it to the usual suspects</p>
+			<ul>
+				<li>"TPG Twitter: things to Tweet" group, if you are on it</li>
+				<li>For a Tweet used to publicize a blog post, email it to <a href="mailto:blogs@paciellogroup.com">blogs@paciellogroup.com</a></li>
+			</ul>
+			<p>Happy Tweeting!</p>
+			<hr>
+			<form id="frmTweetPrepper">
+				<div class="row">
+					<!-- 280 max -->
+					<label for="txtareaTweetbody">Tweet body</label>
+					<div><textarea id="txtareaTweetbody" cols="40" rows="10"></textarea></div>
+				</div>
+				<div class="row">
+					<!-- needs 24 -->
+					<label for="txtTweetURL">Tweet URL</label> <sup>1</sup>
+					<input id="txtTweetURL" type="text" aria-describedby="explanationRe24CharCountDeduction">
+				</div>
+				<div class="row">
+					<label for="txtHashtags">Hashtags (space-separated)</label>
+					<input id="txtHashtags" type="text">
+				</div>
+				<div role="status" aria-atomic="true">
+					<div><span class="char" id="txtCharacterCount">0</span></div>
+					<div><span class="char" id="txtCharactersAvailable">280</span></div>
+				</div>
+				<div class="row">
+					<!-- 280 max -->
+					<label for="txtareaTweetFinal">Your Tweet, ready to post</label>
+					<div><textarea id="txtareaTweetFinal" cols="40" rows="10"></textarea></div>
+				</div>
+				<div class="footnotes">
+					<div id="explanationRe24CharCountDeduction"><sup>1</sup> Note that if any URL is added here, the character count reduces by 25 (what Twitter needs for its short URL for the Tweet and a line break)</div>
+				</div>
+			</form>
+		</main>
+		<script src="../common.js"></script>
+	</body>
+<script>
+var inputs = document.querySelectorAll('textarea, [type=text]');
+var txtareaTweetbody = document.querySelector('#txtareaTweetbody');
+var txtTweetURL = document.querySelector('#txtTweetURL');
+var txtHashtags = document.querySelector('#txtHashtags');
+var txtCharacterCount = document.querySelector('#txtCharacterCount');
+var txtCharactersAvailable = document.querySelector('#txtCharactersAvailable');
+var txtareaTweetFinal = document.querySelector('#txtareaTweetFinal');
+var state = document.querySelector('#state');
+var tweetBody, tweetURL, hashtags;
+var hashtagsSeparator = ' ';
+var tweetURLSeparator = ' ';
+var characterCount = 0;
+var maxCharCount = 280;
+var urlCharCount = 24;
+var charCountDeduction=0;
+var wholeTweet;
+var wholeTweetWithoutURL;
+var intAvailableChars;
+var strCharCount = '';
+var strCharsAvailable = '';
+
+function checkChars() {
+
+	tweetBody = txtareaTweetbody.value;
+	tweetURL = txtTweetURL.value;
+	hashtags = txtHashtags.value;
+
+	charCountDeduction=0;
+	if (hashtags!=='') {
+		hashtagsSeparator='\n';
+		charCountDeduction++;
+	} else {
+		hashtagsSeparator='';
+	}
+	if (tweetURL!=='') {
+		tweetURLSeparator='\n';
+		charCountDeduction++;
+	} else {
+		tweetURLSeparator='';
+	}
+
+	if (tweetURL!=='') {
+		urlCharCount = 24;
+	} else {
+		urlCharCount = 0;
+	}
+
+    txtCharacterCount.textContent = '';
+    txtCharactersAvailable.textContent = '';
+	wholeTweet = tweetBody + hashtagsSeparator + hashtags + tweetURLSeparator + tweetURL;
+	wholeTweetWithoutURL = tweetBody + hashtags;
+	characterCount = wholeTweetWithoutURL.length + urlCharCount;
+	strCharCount = "Character count: " + characterCount;
+	intAvailableChars = ((maxCharCount-charCountDeduction) - characterCount);
+    strCharsAvailable = "Characters available: " + intAvailableChars;
+	if (intAvailableChars>0) {
+        strCharsAvailable += " - You're all good";
+        txtCharactersAvailable.classList.remove('bad');
+        txtareaTweetFinal.removeAttribute('disabled');
+	} else {
+        strCharsAvailable += " - You can't type any more characters. Time to edit!";
+        txtCharactersAvailable.classList.add('bad');
+        txtareaTweetFinal.setAttribute('disabled','disabled');
+	}
+    txtCharacterCount.textContent = strCharCount;
+    txtCharactersAvailable.textContent = strCharsAvailable;
+    txtareaTweetFinal.value = wholeTweet;
+}
+Array.from(inputs).forEach(input => {
+ input.addEventListener('keyup', e => {
+	 checkChars();
+ });
+});
+checkChars();
+
+
+//--------
+
+var textareas = document.querySelectorAll("textarea");
+Array.from(textareas).forEach((textarea) => {
+    textarea.addEventListener("focus", (ev) => {
+        textarea.select();
+    });
+});
+var inputTexts = document.querySelectorAll("input[type=text]");
+Array.from(inputTexts).forEach((inputText) => {
+    inputText.addEventListener("focus", (ev) => {
+        inputText.select();
+    });
+});
+
+</script>
+</html>

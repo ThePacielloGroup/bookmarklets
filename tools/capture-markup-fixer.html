@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Capture - Broken markup fixer</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, shrink-to-fit=no">
+  <style>
+  * {box-sizing: border-box;}
+  body {font-family: sans-serif;}
+  .row {display: block;}
+  label {display: block;font-weight: bold;}
+  form {max-width:800px;}
+  input[type="text"],select,textarea {width:100%;}
+  input,select,button,.button,textarea {border:1px solid black;padding: 0.5em;font-size: 1.2rem;}
+  button,.button {background:#333;color:white;font-weight:bold;border-radius:5px;font-size: 1em;padding: 0.2em 0.3em;}
+  button.primary, .button.primary {background:darkblue;}
+  legend {font-weight: bold;}
+  fieldset {border-radius:5px;margin: 0.5em 0;}
+  .ib label {display: inline-block;margin-right: 2em;}
+  .actions {margin: 1em 0;border-radius:5px;background: lightyellow;padding: 0.5em;border:1px solid black;}
+  *:focus {outline:3px solid darkblue;outline-offset: 3px;box-shadow: 0px 0px 0px 3px white;}
+
+   * {box-sizing: border-box;}
+  .grid {
+    display: grid;
+    grid-gap: 1rem;
+  }
+  @supports (width: min(250px, 100%)) {
+    .grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
+    }
+  }
+  .visually-hidden {clip-path: inset(100%);clip: rect(1px, 1px, 1px, 1px);height: 1px;overflow: hidden;position: absolute;white-space: nowrap;width: 1px;}
+  .area {outline:2px solid blue;padding: 1em;width: 100%;height: 400px;border: 0;font-size: 1.5em;overflow:scroll;}
+  label {font-weight: bold;}
+  </style>
+</head>
+<body>
+ <main>
+  <h1>Capture - Broken markup fixer</h1>
+
+
+
+  <div class="grid">
+  <div>
+   <div><label for="rawHTML">Broken remediation notes from Capture</label></div>
+   <textarea class="area" id="rawHTML"  cols="20" rows="3"></textarea>
+   
+   <button id="submit">Convert back to Rich Text</button>
+
+  </div>
+  <div>
+   <div><label for="richText">Rich Text version</label></div>
+   <div class="area" id="richText" contenteditable></div>
+   <button hidden type="button" id="btnCopyToClipboard">Copy to clipboard</button>
+  </div>
+   
+  </div>
+
+
+ </main>
+<script>
+const rawHTML = document.querySelector('#rawHTML');
+const richText = document.querySelector('#richText');
+const submit = document.querySelector('#submit');
+const btnCopyToClipboard = document.querySelector('#btnCopyToClipboard');
+submit.addEventListener('click', e => {
+ const raw = rawHTML.value;
+ richText.innerHTML = raw;
+  btnCopyToClipboard.removeAttribute("hidden");
+});
+
+btnCopyToClipboard.addEventListener("click", (e) => {
+ //richText.select();
+  document.execCommand("copy");
+  btnCopyToClipboard.focus();
+});
+ 
+</script>
+
+</body>
+</html>

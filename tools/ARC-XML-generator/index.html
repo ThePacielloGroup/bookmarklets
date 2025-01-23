@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+
+<head>
+  <meta charset="utf-8">
+ <link rel="stylesheet" href="../common.css">
+  <title>ARC XML Generator</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, shrink-to-fit=no">
+  <style>
+  .visually-hidden {
+    clip-path: inset(100%);
+    clip: rect(1px, 1px, 1px, 1px);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+  textarea {width:100%;height:10em;}
+  </style>
+</head>
+<body>
+ <main>
+  <h1>ARC XML Generator</h1>
+
+  <p>This tool creates a file that can be imported into ARC Portal to create a User Flow. Using this tool, you are effectively skipping the first 20 steps in the <a href="https://www.paciellogroup.net/knowledge-base/arc/arc-admin-user-guide/guides/user-flows-and-selenium-ide/">'Creating User Flows with Selenium IDE' guide</a>. Handy if you already know the xpath references.</p>
+
+<form action="#" id="formName">
+ <div class="row">
+  <div><label for="PageURL">Page URL</label></div>
+  <input id="PageURL" type="text" value="http://somewhere.com/whatever">
+ </div>
+ <div class="row">
+  <div><label for="ComponentsToBeAnalyzedViaXpath">Components to be analyzed (via xpath)</label></div>
+  <textarea id="ComponentsToBeAnalyzedViaXpath"  cols="20" rows="3"></textarea>
+ </div>
+ <div class="row">
+  <div><label for="ComponentsToBeAnalyzedViaCSSreference">Components to be analyzed (via CSS reference)</label></div>
+  <textarea id="ComponentsToBeAnalyzedViaCSSreference"  cols="20" rows="3"></textarea>
+ </div>
+ <button type="button" id="createXML">Create XML</button>
+ <div class="row">
+  <div><label for="OutputXML">Output</label> <span id="instr">(Copy this to a text file, save as myUserFlow.xml)</span></div>
+  <textarea id="OutputXML"  cols="20" rows="3" aria-describedby="instr"></textarea>
+ </div>
+</form>
+<div id="download"></div>
+
+
+ </main>
+<script src="../common.js"></script>
+<script>
+
+let strXMLStart='';
+let strXML='';
+let strXMLEnd='';
+
+const PageURL = document.querySelector('#PageURL');
+const ComponentsToBeAnalyzedViaXpath = document.querySelector('#ComponentsToBeAnalyzedViaXpath');
+const ComponentsToBeAnalyzedViaCSSreference = document.querySelector('#ComponentsToBeAnalyzedViaCSSreference');
+const OutputXML = document.querySelector('#OutputXML');
+const createXML = document.querySelector('#createXML');
+const download = document.querySelector('#download');
+let locator='';
+
+
+createXML.addEventListener("click", (ev) => {
+
+ strXMLStart='';
+ strXML='';
+ strXMLEnd='';
+
+ strXMLStart+='<?xml version="1.0" encoding="UTF-8"?>\n';
+ strXMLStart+='<TestCase>\n';
+ strXMLStart+=' <selenese>\n';
+ strXMLStart+='  <command>open</command>\n';
+ strXMLStart+='  <target><![CDATA[' + PageURL.value + ']]></target>\n';
+ strXMLStart+='  <value><![CDATA[]]></value>\n';
+ strXMLStart+=' </selenese>\n';
+
+ let ComponentsToBeAnalyzedViaXpathVal = ComponentsToBeAnalyzedViaXpath.value;
+ ComponentsToBeAnalyzedViaXpathVal = ComponentsToBeAnalyzedViaXpathVal.split("\n");
+ for (i=0;i<ComponentsToBeAnalyzedViaXpathVal.length;i++) {
+  locator = ComponentsToBeAnalyzedViaXpathVal[i].trim();
+  if (locator!=='') {
+   strXML+=' <selenese>\n';
+   strXML+='  <command>analyzeAsset</command>\n';
+   strXML+='  <target><![CDATA[xpath=' + ComponentsToBeAnalyzedViaXpathVal[i] + ']]></target>\n';
+   strXML+='  <value><![CDATA[]]></value>\n';
+   strXML+=' </selenese>\n';
+  }
+ }
+
+ let ComponentsToBeAnalyzedViaCSSreferenceVal = ComponentsToBeAnalyzedViaCSSreference.value;
+ ComponentsToBeAnalyzedViaCSSreferenceVal = ComponentsToBeAnalyzedViaCSSreferenceVal.split("\n");
+ for (i=0;i<ComponentsToBeAnalyzedViaCSSreferenceVal.length;i++) {
+  locator = ComponentsToBeAnalyzedViaCSSreferenceVal[i].trim();
+  if (locator!=='') {
+   strXML+=' <selenese>\n';
+   strXML+='  <command>analyzeAsset</command>\n';
+   strXML+='  <target><![CDATA[css=' + ComponentsToBeAnalyzedViaCSSreferenceVal[i] + ']]></target>\n';
+   strXML+='  <value><![CDATA[]]></value>\n';
+   strXML+=' </selenese>\n';
+  }
+ }
+
+ strXMLEnd+='</TestCase> \n';
+
+ strXML = strXMLStart + strXML + strXMLEnd;
+
+ OutputXML.value = strXML;
+
+ function download(filename, text) {
+  if (document.querySelector('#ARCdownload')) {
+    document.querySelector('#ARCdownload').remove();
+  }
+   var element = document.createElement('a');
+   element.textContent='Download the XML file';
+   element.setAttribute('id', 'ARCdownload');
+   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+   element.setAttribute('download', filename);
+   document.body.appendChild(element);
+ }
+
+ download("ARC-UserFlow-Steps.xml",strXML); 
+
+});
+
+
+</script>
+<p><a href="https://github.com/ThePacielloGroup/Helpers">View source code on GitHub 'Helpers' Repo</a></p></body>
+</html>
